@@ -18,35 +18,38 @@ Both `replays/` and `summaries/` contain a `.gitempty` marker that is automatica
 
 ## Workflow
 
-### 1. Generate the HTML replay
-
-After completing a Claude Code session, use the [claude-replay](https://skillsllm.com/skill/claude-replay) skill:
+### All-in-one (recommended)
 
 ```bash
-npx claude-replay <session-id> -o replay.html
-# or point directly at the session file:
-npx claude-replay ~/.claude/projects/<project-hash>/<session-id>.jsonl -o replay.html
+python scripts/save_session.py
 ```
 
-### 2. File it and generate the summary
+Auto-discovers the most recent session, asks `claude -p` to generate a title, produces the HTML replay via `npx claude-replay`, and writes both the replay and summary.
+
+To target a specific session, run `/status` inside Claude Code to get the session ID:
 
 ```bash
-python scripts/add_conversation.py replay.html --title "Short descriptive title"
+python scripts/save_session.py <session-id>
 ```
-
-This copies the HTML to `replays/`, calls `generate_summary.py` internally, and writes a markdown summary to `summaries/`. Both files share the same `YYYY-MM-DD-slug` stem derived from `--title` and today's date.
 
 **Options:**
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--title` | filename stem | Human-readable title used for slug and summary heading |
-| `--date` | today | Override date in `YYYY-MM-DD` format |
+| `--title` | auto-generated | Override the Claude-generated title |
+| `--date` | today | Override date prefix (`YYYY-MM-DD`) |
+| `--file` | — | Path to a specific session JSONL file |
 | `--no-summary` | off | Skip summary generation |
 
-### 3. Generate a summary independently
+### Step by step
 
-If the replay is already in `replays/`:
+If you already have the HTML replay file:
+
+```bash
+python scripts/add_conversation.py replay.html --title "Short descriptive title"
+```
+
+To regenerate a summary for a replay already in `replays/`:
 
 ```bash
 python scripts/generate_summary.py replays/2026-06-03-my-session.html
@@ -54,8 +57,11 @@ python scripts/generate_summary.py replays/2026-06-03-my-session.html
 
 ## Scripts
 
+### `scripts/save_session.py`
+All-in-one entry point. Locates the session JSONL in `~/.claude/projects/`, runs `npx claude-replay` to produce the HTML, then delegates to `add_conversation.archive()`.
+
 ### `scripts/add_conversation.py`
-Main entry point. Copies the HTML replay into `replays/`, then delegates to `generate_summary.write_summary()`.
+Takes an existing HTML replay, copies it to `replays/`, and calls `generate_summary.write_summary()`. Exposes `archive()` for use by `save_session.py`.
 
 ### `scripts/generate_summary.py`
 Extracts conversation text from a claude-replay HTML file and calls `claude -p` (Claude Code CLI) to produce a markdown summary. Extraction strategy:

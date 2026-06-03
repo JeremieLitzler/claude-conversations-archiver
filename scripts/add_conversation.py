@@ -42,6 +42,25 @@ def slugify(text: str) -> str:
     return text.strip("-")
 
 
+def archive(source: Path, title: str | None = None, date_str: str | None = None, no_summary: bool = False) -> None:
+    """Copy a replay HTML into replays/ and optionally generate its summary."""
+    title = title or source.stem
+    date_str = date_str or str(date.today())
+    dest_name = f"{date_str}-{slugify(title)}.html"
+    dest_path = REPLAYS_DIR / dest_name
+
+    marker = REPLAYS_DIR / ".gitempty"
+    if marker.exists():
+        marker.unlink()
+
+    shutil.copy2(source, dest_path)
+    print(f"Replay:  replays/{dest_name}")
+
+    if not no_summary:
+        summary_path = generate_summary.write_summary(dest_path, title)
+        print(f"Summary: summaries/{summary_path.name}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__,
@@ -58,20 +77,7 @@ def main() -> None:
         print(f"Error: not found: {source}", file=sys.stderr)
         sys.exit(1)
 
-    title = args.title or source.stem
-    dest_name = f"{args.date}-{slugify(title)}.html"
-    dest_path = REPLAYS_DIR / dest_name
-
-    marker = REPLAYS_DIR / ".gitempty"
-    if marker.exists():
-        marker.unlink()
-
-    shutil.copy2(source, dest_path)
-    print(f"Replay:  replays/{dest_name}")
-
-    if not args.no_summary:
-        summary_path = generate_summary.write_summary(dest_path, title)
-        print(f"Summary: summaries/{summary_path.name}")
+    archive(source, args.title, args.date, args.no_summary)
 
 
 if __name__ == "__main__":

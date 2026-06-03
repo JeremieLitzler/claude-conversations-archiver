@@ -21,40 +21,36 @@ No dependencies to install — the scripts use Python stdlib only.
 
 ## Usage
 
-### 1. Generate the HTML replay
-
-After completing a Claude Code session, run `claude-replay` to export it:
+### All-in-one (recommended)
 
 ```bash
-# By session ID (auto-discovered):
-npx claude-replay <session-id> -o replay.html
-
-# Or point directly at the session file:
-npx claude-replay ~/.claude/projects/<project-hash>/<session-id>.jsonl -o replay.html
+python scripts/save_session.py
 ```
 
-### 2. Archive the conversation
+Auto-discovers the most recent Claude Code session, asks Claude to generate a title from the conversation, produces the HTML replay, and archives everything. To target a specific session, run `/status` inside Claude Code to get the session ID:
 
 ```bash
-python scripts/add_conversation.py replay.html --title "Short descriptive title"
+python scripts/save_session.py <session-id>
 ```
-
-This will:
-- Copy the HTML to `replays/YYYY-MM-DD-slug.html`
-- Generate a markdown summary and write it to `summaries/YYYY-MM-DD-slug.md`
-- The summary includes a link to the replay file
 
 **Options:**
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--title` | filename stem | Title used as the summary heading and to derive the filename slug |
+| `--title` | auto-generated | Override the Claude-generated title |
 | `--date` | today | Override the date prefix (`YYYY-MM-DD`) |
-| `--no-summary` | off | Copy the replay without generating a summary |
+| `--file` | — | Path to a specific session JSONL file |
+| `--no-summary` | off | Skip summary generation |
 
-### Regenerate a summary
+### Step by step
 
-If the replay is already in `replays/` and you want to regenerate its summary:
+If you already have the HTML replay file:
+
+```bash
+python scripts/add_conversation.py replay.html --title "My session title"
+```
+
+To regenerate a summary for a replay already in `replays/`:
 
 ```bash
 python scripts/generate_summary.py replays/2026-06-03-my-session.html
