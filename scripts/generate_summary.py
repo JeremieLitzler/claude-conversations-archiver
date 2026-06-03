@@ -18,7 +18,7 @@ import sys
 from html.parser import HTMLParser
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path.cwd()
 SUMMARIES_DIR = REPO_ROOT / "summaries"
 
 SUMMARY_PROMPT = (
@@ -123,9 +123,7 @@ def write_summary(replay_path: Path, title: str | None = None) -> Path:
     conversation_text = extract_conversation(replay_path)
     summary_body = _call_claude(conversation_text)
 
-    marker = SUMMARIES_DIR / ".gitempty"
-    if marker.exists():
-        marker.unlink()
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
 
     content = (
         f"# {display_title}\n\n"

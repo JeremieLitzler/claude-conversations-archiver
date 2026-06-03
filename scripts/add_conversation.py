@@ -31,7 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import generate_summary  # noqa: E402
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path.cwd()
 REPLAYS_DIR = REPO_ROOT / "replays"
 
 
@@ -49,9 +49,7 @@ def archive(source: Path, title: str | None = None, date_str: str | None = None,
     dest_name = f"{date_str}-{slugify(title)}.html"
     dest_path = REPLAYS_DIR / dest_name
 
-    marker = REPLAYS_DIR / ".gitempty"
-    if marker.exists():
-        marker.unlink()
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
 
     shutil.copy2(source, dest_path)
     print(f"Replay:  replays/{dest_name}")
