@@ -6,15 +6,7 @@ A personal archive of Claude Code sessions — each stored as an interactive HTM
 
 - **Python 3.10+**
 - **[Claude Code](https://claude.ai/code)** — provides the `claude` CLI used for summary generation
-- **[claude-replay](https://skillsllm.com/skill/claude-replay)** — converts session files into self-contained HTML replays
-
-### Install claude-replay
-
-Follow the instructions on the [claude-replay skill page](https://skillsllm.com/skill/claude-replay). Once installed, verify it is available:
-
-```bash
-claude-replay --version
-```
+- **Node.js with npx** — used to run [claude-replay](https://skillsllm.com/skill/claude-replay) without a global install
 
 ## Setup
 
@@ -35,10 +27,10 @@ After completing a Claude Code session, run `claude-replay` to export it:
 
 ```bash
 # By session ID (auto-discovered):
-claude-replay <session-id> -o replay.html
+npx claude-replay <session-id> -o replay.html
 
 # Or point directly at the session file:
-claude-replay ~/.claude/projects/<project-hash>/<session-id>.jsonl -o replay.html
+npx claude-replay ~/.claude/projects/<project-hash>/<session-id>.jsonl -o replay.html
 ```
 
 ### 2. Archive the conversation

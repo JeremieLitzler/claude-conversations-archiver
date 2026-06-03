@@ -23,9 +23,9 @@ Both `replays/` and `summaries/` contain a `.gitempty` marker that is automatica
 After completing a Claude Code session, use the [claude-replay](https://skillsllm.com/skill/claude-replay) skill:
 
 ```bash
-claude-replay <session-id> -o replay.html
+npx claude-replay <session-id> -o replay.html
 # or point directly at the session file:
-claude-replay ~/.claude/projects/<project-hash>/<session-id>.jsonl -o replay.html
+npx claude-replay ~/.claude/projects/<project-hash>/<session-id>.jsonl -o replay.html
 ```
 
 ### 2. File it and generate the summary

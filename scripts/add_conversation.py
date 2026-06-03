@@ -6,7 +6,7 @@ Usage:
 
 Steps:
   1. Generate the HTML replay first:
-         claude-replay <session-id> -o replay.html
+         npx claude-replay <session-id> -o replay.html
   2. Run this script to file it and generate a summary:
          python scripts/add_conversation.py replay.html --title "My conversation"
 
